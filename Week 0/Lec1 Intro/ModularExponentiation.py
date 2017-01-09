@@ -469,13 +469,13 @@ def smarter_loop_modular_exp(a, b, m):
 	return result
 
 def testing_function(fxn_to_test, num_tests, verbose):
-	"""((int, int, int) -> int) -> None
+	"""(((int, int, int) -> int), int, bool) -> None
 	Tests the given function with some random parameters to check validity
 	:param fxn_to_test: the function I want to test
 	:return: None
 	"""
 	t0 = time.time()
-	for i in range(50):
+	for i in range(num_tests):
 
 		# Randomly generate a, b, and m
 		a = random.randint(1, 10)
