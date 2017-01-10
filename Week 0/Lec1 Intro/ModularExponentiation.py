@@ -472,6 +472,8 @@ def testing_function(fxn_to_test, num_tests, verbose):
 	"""(((int, int, int) -> int), int, bool) -> None
 	Tests the given function with some random parameters to check validity
 	:param fxn_to_test: the function I want to test
+	:param num_tests: the number of times to test the function
+	:param verbose: print out the function's IO
 	:return: None
 	"""
 	t0 = time.time()
