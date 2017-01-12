@@ -483,7 +483,8 @@ def abm_generator():
 			random.randint(1, 35))
 
 if __name__ == '__main__':
-	mod_exp_tester = Tester(baseline=correct_modular_exp,
+	mod_exp_tester = Tester(name="Modular Exponentiation Tester",
+							baseline=correct_modular_exp,
 							input_generator=abm_generator,
 							num_tests=50)
 

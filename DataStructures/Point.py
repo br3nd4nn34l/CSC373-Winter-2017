@@ -14,6 +14,9 @@ class Point():
 	def __eq__(self, other):
 		return (self.x, self.y) == (other.x, other.y)
 
+	def __ne__(self, other):
+		return not(self == other)
+
 	def distance(self, other):
 		x_diff = self.x - other.x
 		y_diff = self.y - other.y

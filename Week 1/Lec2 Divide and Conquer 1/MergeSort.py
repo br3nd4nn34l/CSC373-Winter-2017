@@ -26,6 +26,9 @@ sorted list as follows:
 	7) Return the return list
 """
 
+def correct_merge(A, B):
+	return sorted(A + B)
+
 def iterative_merge(A, B):
 	"""([int], [int]) -> [int]"""
 
@@ -60,7 +63,6 @@ def iterative_merge(A, B):
 
 	return ret_lst + A_leftovers + B_leftovers
 
-
 def recursive_merge(A, B):
 	"""([int], [int]) -> [int]
 
@@ -84,6 +86,32 @@ def recursive_merge(A, B):
 		elif A[0] > B[0]:
 			return [B[0]] + recursive_merge(A, B[1:])
 
+def merge_sort_using_iter(A):
+	if len(A) < 2:
+		return A
+	else:
+		mid = len(A) // 2
+		left = A[:mid]
+		right = A[mid:]
+
+		sorted_L = merge_sort_using_iter(left)
+		sorted_R = merge_sort_using_iter(right)
+
+		return iterative_merge(sorted_L, sorted_R)
+
+def merge_sort_using_rec(A):
+	if len(A) < 2:
+		return A
+	else:
+		mid = len(A) // 2
+		left = A[:mid]
+		right = A[mid:]
+
+		sorted_L = merge_sort_using_rec(left)
+		sorted_R = merge_sort_using_rec(right)
+
+		return recursive_merge(sorted_L, sorted_R)
+
 def generate_random_arr(size):
 	"""
 	Generates an array of length size, with each element randomly ranging
@@ -96,18 +124,31 @@ def generate_random_arr(size):
 		ret_lst += [random.randint(0, 20)]
 	return ret_lst
 
+def generate_random_tupified_arr():
+	return (generate_random_arr(random.randint(0, 40)),)
+
 def generate_sorted_arr_pair():
 	return (sorted(generate_random_arr(random.randint(0, 25))),
 			sorted(generate_random_arr(random.randint(0, 25))))
 
-def correct_merge(A, B):
-	return sorted(A + B)
-
-
 if __name__ == '__main__':
-	merge_tester = Tester(num_tests=50,
+
+	# Testing Merge
+	merge_tester = Tester(name="Merge Tester",
+						  num_tests=50,
 						  baseline=correct_merge,
 						  input_generator=generate_sorted_arr_pair)
 	merge_tester.add_function("Iterative Merge", iterative_merge)
 	merge_tester.add_function("Recursive Merge", recursive_merge)
 	merge_tester.test_all_functions()
+
+	# Testing MergeSort
+	mergesort_tester = Tester(name="MergeSort Tester",
+							  num_tests=50,
+							  baseline=sorted,
+							  input_generator=generate_random_tupified_arr)
+	mergesort_tester.add_function("MergeSort Using Iterative Merge",
+								  merge_sort_using_iter)
+	mergesort_tester.add_function("MergeSort Using Recursive Merge",
+								  merge_sort_using_rec)
+	mergesort_tester.test_all_functions()
