@@ -1,4 +1,5 @@
 import random # for testing
+from Testing.Tester import Tester
 
 """
 Merge Sort - Divide and Conquer Example 1
@@ -60,8 +61,6 @@ def iterative_merge(A, B):
 	return ret_lst + A_leftovers + B_leftovers
 
 
-"""
-"""
 def recursive_merge(A, B):
 	"""([int], [int]) -> [int]
 
@@ -97,50 +96,18 @@ def generate_random_arr(size):
 		ret_lst += [random.randint(0, 20)]
 	return ret_lst
 
-def test_merge(merge_method, A, B):
-	sorted_A = sorted(A)
-	sorted_B = sorted(B)
+def generate_sorted_arr_pair():
+	return (sorted(generate_random_arr(random.randint(0, 25))),
+			sorted(generate_random_arr(random.randint(0, 25))))
 
-	merged = merge_method(sorted_A, sorted_B)
-	expected = sorted(A + B)
-
-	if merged != expected:
-		print("Failure. Merged {a}, {b}.\nGot: {m}\nExpected: {e}\n".format(
-			a=sorted_A,
-			b=sorted_B,
-			m=merged,
-			e=expected))
-		return False
-	return True
-
-def symmetric_merge_test(merge_method, A, B):
-	t1 = test_merge(merge_method, A, B)
-	t2 = test_merge(merge_method, B, A)
-	return t1 and t2
-
-def run_merge_tests(method_name, merge_method, num_tests):
-	print("Testing {method_name} ...".format(method_name=method_name))
-	for i in range(num_tests):
-		A_size = random.randint(1, 15)
-		B_size = A_size
-
-		if random.randint(0, 4) == 1:
-			B_size = random.randint(0, A_size)
-
-		A = generate_random_arr(A_size)
-		B = generate_random_arr(B_size)
-
-		success = symmetric_merge_test(merge_method, A, B)
-		if not success:
-			break
-	if success:
-		print("Tests successful!")
-	else:
-		print("Some tests were failed. Revise code")
-
+def correct_merge(A, B):
+	return sorted(A + B)
 
 
 if __name__ == '__main__':
-	num_tests = 50
-	run_merge_tests("Iterative Merge", iterative_merge, num_tests)
-	run_merge_tests("Recursive Merge", recursive_merge, num_tests)
+	merge_tester = Tester(num_tests=50,
+						  baseline=correct_merge,
+						  input_generator=generate_sorted_arr_pair)
+	merge_tester.add_function("Iterative Merge", iterative_merge)
+	merge_tester.add_function("Recursive Merge", recursive_merge)
+	merge_tester.test_all_functions()

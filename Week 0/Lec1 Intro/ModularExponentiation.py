@@ -1,4 +1,5 @@
-import random, time
+import random
+from Testing.Tester import Tester
 '''
 Problem: Modular Exponentiation
 
@@ -48,6 +49,14 @@ def mod(a, b):
 	Returns (a mod b).
 	'''
 	return a % b
+
+
+def correct_modular_exp(a, b, m):
+	"""
+	Dumb way, but this works for sure
+	"""
+	return mod(a ** b,
+			   m)
 
 '''
 Naive Solution - Looping
@@ -468,53 +477,21 @@ def smarter_loop_modular_exp(a, b, m):
 		exponent //= 2
 	return result
 
-def testing_function(fxn_to_test, num_tests, verbose):
-	"""(((int, int, int) -> int), int, bool) -> None
-	Tests the given function with some random parameters to check validity
-	:param fxn_to_test: the function I want to test
-	:param num_tests: the number of times to test the function
-	:param verbose: print out the function's IO
-	:return: None
-	"""
-	t0 = time.time()
-	for i in range(num_tests):
-
-		# Randomly generate a, b, and m
-		a = random.randint(1, 10)
-		b = random.randint(1, 7)
-		m = random.randint(1, 35)
-
-		# Calculate the expected result
-		expected = (a ** b) % m
-		# Calculate what the algorithm gets
-		result = fxn_to_test(a, b, m)
-
-		# Print out stuff maybe
-		if verbose:
-			print("(a, b, m) = {tup} | Answer = {ans}".format(tup=(a,b,m),
-															  ans=result))
-
-		# Notify on failures
-		if expected != result:
-			print("Failed on (a, b, m) = {tup}. Expected {exp}, "
-				  "got {res}".format(tup=(a, b, m),
-									 exp=expected,
-									 res=result))
-			return
-	t1 = time.time()
-	print("Tests successful! Total test time: {tm}. Average: {avg}".format(
-		tm=t1 - t0,
-		avg=(t1 - t0) / num_tests))
+def abm_generator():
+	return (random.randint(2, 10),
+			random.randint(1, 7),
+			random.randint(1, 35))
 
 if __name__ == '__main__':
-	num_tests = 50
-	verbose = False
+	mod_exp_tester = Tester(baseline=correct_modular_exp,
+							input_generator=abm_generator,
+							num_tests=50)
 
-	print("Testing looping implementation...")
-	testing_function(looping_modular_exp, num_tests, verbose)
+	fxns = [("Looping Modular Exponentiation", looping_modular_exp),
+			("Recursive Modular Exponentiation", recursive_modular_exp),
+			("Smarter Looping Modular Exponentiation", smarter_loop_modular_exp)]
 
-	print("Testing recursive implementation...")
-	testing_function(recursive_modular_exp, num_tests, verbose)
+	for fxn_tup in fxns:
+		mod_exp_tester.add_function(*fxn_tup)
 
-	print("Testing smarter looping implementation...")
-	testing_function(smarter_loop_modular_exp, num_tests, verbose)
+	mod_exp_tester.test_all_functions()
