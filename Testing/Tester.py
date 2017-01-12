@@ -2,9 +2,10 @@ import random
 
 """Class to automatically test my code for this course."""
 class Tester():
-	def __init__(self, baseline, input_generator, num_tests):
+	def __init__(self, name, baseline, input_generator, num_tests):
 		"""(String, ((Unknown) -> Unknown), ((None) -> (Unknown)), int) ->
 			Tester"""
+		self.name = name
 		self.baseline = baseline
 		self.input_generator = input_generator
 		self.num_tests = num_tests
@@ -47,6 +48,7 @@ class Tester():
 				passes += [fxn_name]
 			else:
 				failures += [fxn_name]
-		print("Test Results:\n\tPassing Functions:{passes}\n\tFailing "
-			  "Functions:{fails}".format(passes=passes,
+		print("{name} Test Results:\n\tPassing Functions:{passes}\n\tFailing "
+			  "Functions:{fails}".format(name=self.name,
+										 passes=passes,
 										 fails=failures))
