@@ -29,6 +29,53 @@ sorted list as follows:
 def correct_merge(A, B):
 	return sorted(A + B)
 
+
+""" Cost Analysis / Termination:
+
+This algorithm uses a while-loop that loops until one of cur_A_ind or cur_B_ind
+exceeds the bounds of their respective array. For every iteration of the loop,
+either cur_A_ind or cur_B_ind will be incremented. The most incrementations possible
+is 2*min(n, m) (the case where cur_A_ind is incremented every odd/even iteration and
+cur_B_ind is incremented on every other iteration).
+
+Since the while loop does 2*min(n, m) iterations, the cost/runtime of this solution is
+O(min(n, m))
+
+Once the while loop ends the algorithm attaches the leftovers from the larger array
+to the end of the list and then terminates.
+"""
+"""Correctness:
+
+Loop Invariant - P(i) -> true when after the i-th iteration of the while-loop,
+the algorithm has built a list of length i that is sorted in increasing order
+
+Induction on Loop Number:
+	Base Case: i = 0
+		After the 0-th iteration of the loop, the algorithm has constructed an
+			empty array.
+		By vacuous truth, this array is sorted in increasing order and is of length i = 0.
+		Thus P(0) holds.
+	Inductive Hypothesis:
+		Assume that for some k \in N, P(k - 1) holds.
+	Inductive Step:
+		Consider what would happen before the loop enters iteration k
+		We know from the inductive hypothesis that the loop has built an
+			array sorted in increasing order that is of length k - 1
+
+		Since this array has been created using the frontal elements of A and B,
+			we know that the last element we added to the array was from the front
+			of A or B. Since A and B are sorted in increasing order, we know that
+			the currently observed elements of A and B are the smallest elements in
+			A and B respectively that are not in ret_lst
+
+		During this iteration, the loop will do the following:
+			Case X: Currently observed element of A < Currently observed element of B
+			Case Y: Currently observed element of B < Currently observed element of A
+			Case Z: Currently observed element of B = Currently observed element of A
+
+		All of these choices pick the smallest element(s) possible to append to ret_lst,
+		but we also know that the element that is currently being observed
+"""
 def iterative_merge(A, B):
 	"""([int], [int]) -> [int]"""
 

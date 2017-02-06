@@ -26,7 +26,6 @@ def distance(P1, P2):
 	"""
 	return P1.distance(P2)
 
-
 """Naive Solution: compare every point to every other point
 
 In order to do this, we need two nested for-loops. Since each of these
@@ -47,16 +46,14 @@ def brute_closest_pair(P):
 
 	# Find an initial low score (since pseudocode infinity is bullshit)
 	closest_pair = (P[0], P[1])
-	lowest_score = place_holder_distance(P)
 
 	for i in range(len(P)): # O(n)
 		for j in range(i + 1, len(P)): # O(n)
 			if i == j:
 				print("Warning")
 			cur_pair = (P[i], P[j])
-			if distance(*cur_pair) < lowest_score:
+			if distance(*cur_pair) < distance(*closest_pair):
 				closest_pair = cur_pair
-				lowest_score = distance(*cur_pair)
 
 	return order_pair(closest_pair)
 
@@ -86,13 +83,10 @@ def order_pair(pair):
 	else:
 		return (pair[1], pair[0])
 
-def place_holder_distance(P):
-
-	# Ideally should be infinity - could use float("inf")
-	return distance(*place_holder_points(P))
-
 def place_holder_points(P):
-	return (P[0], P[1])
+	p1 = Point(-100, -100)
+	p2 = Point(100, 100)
+	return (p1, p2)
 
 def determine_splitting_line(X):
 	"""([Point]) -> int
@@ -155,34 +149,22 @@ def naive_div_conq_actual(X):
 		closest_pair_L = naive_div_conq_actual(left)
 		closest_pair_R = naive_div_conq_actual(right)
 
-		# Figure out shortest distance for L, R sides, set place holders in
-		# the event of edge cases
-		if closest_pair_L != None:
-			distance_L = distance(*closest_pair_L)
-		else:
-			distance_L = place_holder_distance(X)
+		# Set place holders in the event of edge cases
+		if closest_pair_L == None:
 			closest_pair_L = place_holder_points(X)
-
-		if closest_pair_R != None:
-			distance_R = distance(*closest_pair_R)
-		else:
-			distance_R = place_holder_distance(X)
+		if closest_pair_R == None:
 			closest_pair_R = place_holder_points(X)
 
 		# Set the low score
 		if distance(*closest_pair_L) < distance(*closest_pair_R):
 			closest_pair = closest_pair_L
-			lowest_dist = distance_L
 		else:
 			closest_pair = closest_pair_R
-			lowest_dist = distance_R
 
 		for l in left:
 			for r in right:
-				cur_dist = distance(l, r)
-				if cur_dist < lowest_dist:
+				if distance(l, r)< distance(*closest_pair):
 					closest_pair = (l, r)
-					lowest_dist = cur_dist
 
 		return closest_pair
 
@@ -218,27 +200,17 @@ def optimized_naive_div_conq_actual(X):
 		closest_pair_L = optimized_naive_div_conq_actual(left)
 		closest_pair_R = optimized_naive_div_conq_actual(right)
 
-		# Figure out shortest distance for L, R sides, set place holders in
-		# the event of edge cases
-		if closest_pair_L != None:
-			distance_L = distance(*closest_pair_L)
-		else:
-			distance_L = place_holder_distance(X)
+		# Set place holders in the event of edge cases
+		if closest_pair_L == None:
 			closest_pair_L = place_holder_points(X)
-
-		if closest_pair_R != None:
-			distance_R = distance(*closest_pair_R)
-		else:
-			distance_R = place_holder_distance(X)
+		if closest_pair_R == None:
 			closest_pair_R = place_holder_points(X)
 
 		# Set the low score
 		if distance(*closest_pair_L) < distance(*closest_pair_R):
 			closest_pair = closest_pair_L
-			lowest_dist = distance_L
 		else:
 			closest_pair = closest_pair_R
-			lowest_dist = distance_R
 
 		# Throw away the points in left and right whose x-coordinate is more
 		# than lowest_dist units of distance away from the splitting line (
@@ -247,20 +219,18 @@ def optimized_naive_div_conq_actual(X):
 		new_left, new_right = [], []
 
 		for l in left:
-			if abs(l.x - split) < lowest_dist:
+			if abs(l.x - split) < distance(*closest_pair):
 				new_left += [l]
 
 		for r in right:
-			if abs(r.x - split) < lowest_dist:
+			if abs(r.x - split) < distance(*closest_pair):
 				new_right += [r]
 
 
 		for l in new_left:
 			for r in new_right:
-				cur_dist = distance(l, r)
-				if cur_dist < lowest_dist:
+				if distance(l, r) < distance(*closest_pair):
 					closest_pair = (l, r)
-					lowest_dist = cur_dist
 
 		return closest_pair
 
@@ -279,6 +249,9 @@ def fully_optimized_div_conq(P):
 	return order_pair(fully_optimized_div_conq_actual(X, Y))
 
 def fully_optimized_div_conq_actual(X, Y):
+
+	# Kind of works, not sure why it doesn't
+
 	# Edge Cases - return None
 	if len(X) < 2:
 		return None
@@ -294,50 +267,47 @@ def fully_optimized_div_conq_actual(X, Y):
 		# Figure out which points lie on the left and right of the line
 		(left, right) = split_points(X, split)
 
-		# Make the same list as above, but sorted in terms of Y instead (if Y
-		# is already sorted in terms of Y, doing a simple filter will
-		# maintain its sorted-ness)
-		(left_y, right_y) = split_points(Y, split)
-
 		# Figure out the closest pair for each group
-		closest_pair_L = fully_optimized_div_conq_actual(left, left_y)
-		closest_pair_R = fully_optimized_div_conq_actual(right, right_y)
+		closest_pair_L = optimized_naive_div_conq_actual(left)
+		closest_pair_R = optimized_naive_div_conq_actual(right)
 
-		# Figure out shortest distance for L, R sides, set place holders in
-		# the event of edge cases
-		if closest_pair_L != None:
-			distance_L = distance(*closest_pair_L)
-		else:
-			distance_L = place_holder_distance(X)
+		# Set place holders in the event of edge cases
+		if closest_pair_L == None:
 			closest_pair_L = place_holder_points(X)
-
-		if closest_pair_R != None:
-			distance_R = distance(*closest_pair_R)
-		else:
-			distance_R = place_holder_distance(X)
+		if closest_pair_R == None:
 			closest_pair_R = place_holder_points(X)
 
 		# Set the low score
 		if distance(*closest_pair_L) < distance(*closest_pair_R):
 			closest_pair = closest_pair_L
-			lowest_dist = distance_L
 		else:
 			closest_pair = closest_pair_R
-			lowest_dist = distance_R
 
 		# Throw away the points in Y whose x-coordinate is more
-		# than lowest_dist units of distance away from the splitting line (
-		# since they won't be any closer to the other side)
-
+		# than lowest_dist units of distance away from the splitting line
 		new_Y = []
 		for pt in Y:
-			if abs(pt.x - split) < lowest_dist:
+			if abs(pt.x - split) <= distance(*closest_pair):
 				new_Y += [pt]
+		new_Y.sort(key=lambda pt: pt.x)
+		new_Y.sort(key=lambda pt: pt.y)
 
 		# Use the fact that there can be no more than 6 points in the
 		# rectangle (need more explanation) to create a linear-cost loop
 		# We need to consider them in terms of increasing (or decreasing)
 		# y-coordinates
+		window_size = 6
+
+		length_to_travel = len(new_Y) - window_size
+		if length_to_travel < 0:
+			length_to_travel = len(new_Y)
+
+		for i in range(length_to_travel):
+			window = new_Y[i: i + window_size]
+			for p1 in window:
+				for p2 in window:
+					if (distance(p1, p2) < distance(*closest_pair)) and (p1 != p2):
+						closest_pair = (p1, p2)
 
 		return closest_pair
 
@@ -345,7 +315,6 @@ def fully_optimized_div_conq_actual(X, Y):
 def generate_rand_point():
 	"""(None) -> Point
 	Generate a random point in the rectangle (0, 0) : (20, 20)
-	:return:
 	"""
 	return Point(random.random() * 20,
 				 random.random() * 20)
@@ -379,8 +348,10 @@ if __name__ == '__main__':
 					baseline=brute_closest_pair,
 					input_generator=generate_randomly_sized_point_lst,
 					num_tests=50)
-	tester.add_function("Brute Force", brute_closest_pair)
 	tester.add_function("Naive Divide and Conquer", naive_div_conq)
 	tester.add_function("Optimized Naive Divide and Conquer",
 						optimized_naive_div_conq)
+	tester.add_function("Fully Optimized Divide and Conquer",
+						fully_optimized_div_conq)
+
 	tester.test_all_functions()

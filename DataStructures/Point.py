@@ -5,8 +5,10 @@ class Point():
 		self.y = y
 
 	def __str__(self):
-		return "({x}, {y})".format(x=self.x,
-								   y=self.y)
+		x_str = '%.2f' % self.x
+		y_str = '%.2f' % self.y
+		return "({x}, {y})".format(x=x_str,
+								   y=y_str)
 
 	def __repr__(self):
 		return "Point" + str(self)

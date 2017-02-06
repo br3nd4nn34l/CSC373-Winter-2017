@@ -1,0 +1,26 @@
+Assume Arr is indexed starting at 1
+
+# In the worst case our second-last i will be right before the first infinity (i.e. let i = 2^k, A[i] = n, , 
+# leading us to jump to an infinity at A[2i], 2i = 2^(k + 1). Our final array size will be 2i \in O(i)
+FindClosestInf(Arr):
+	i = 1
+	while Arr[i] != infinity:
+		i *= 2
+	return i
+
+RecursiveBeforeInfSearch(FiniteArr):
+	if len(FiniteArr) == 1:
+		return 1
+	else:
+		leftHalf = FiniteArr[:len(FiniteArr) // 2]
+		rightHalf = FiniteArr[len(FiniteArr) // 2:]
+		if leftHalf[len(leftHalf)] == infinity:
+			return len(leftHalf)
+		else:
+			return len(leftHalf) + RecursiveBeforeInfSearch(rightHalf)
+
+
+
+FindN(Arr):
+	ArrToSearch = A[1:FindClosestInf(Arr)]
+	n = RecursiveBeforeInfSearch(ArrToSearch)
