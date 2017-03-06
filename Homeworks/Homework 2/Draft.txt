@@ -1,0 +1,145 @@
+1) True / False Graph Theory
+
+	Notes:
+		Refer to connected components with the abbreviation CC.
+
+	a) Undirected graph G = (V, E) with following properties:
+		|V| = n
+		|E| <= (n - k)
+		Number of Connected Components = j >= k
+		Has at least k connected components
+
+
+
+		Consider a graph with n nodes and zero edges (i.e. the number of CCs is n = number of nodes)
+		
+		If we add an edge to connect two CCs into one CC, we reduce the number of CCs by 1; from n to (n - 1).
+		
+		If we add (n - k) CC-connecting edges to this graph, we reduce the number of CCs by (n - k ); from n to (n - (n - k)) = k.
+
+
+
+	b) Shortest path tree constructed by Djikstra is an MST
+
+
+	c) If we have an MST and increase the weight of each edge by 1, the MST is still minimal
+
+		We can compute the MST with Kruskal's or Prim, in either algorithm edges are considered in increasing order.
+		
+		If we increase the weight of every edge by 1, the order of the edges with respect to weight is unchanged (a < b --> a + 1 < b + 1)
+		
+		If the order of edge consideration remains the same, and the less/greater/equal relations do not change between any two edges, 
+		then the algorithm(s) must output the same result/ MST.
+
+
+	d) In a weighted, directed graph with positive weights, Djikstra's might call the update procedure on the same edge more than once
+
+	(e) Maximum flow in a network with integral capacities is necessarily integral.
+	
+	(f) We are given a weighted graph and a shortest path from s to t. If all edge weights in the graph are multiplied by a positive constant, the given path remains shortest from s to t with respect to the new weights.
+
+	(g) Suppose we run DFS on a directed graph G = (V, E) and we find a vertex with discovery time 1 and finishing time 2|V |. Then the entire graph must be strongly connected.
+
+	(h) Ford-Fulkerson method runs in polynomial time assuming that capacities are positive integers
+
+	(i) Ford-Fulkerson method terminates on all input flow networks with capacities that are positive real numbers.
+
+	(j) Undirected graph G = (V, E) is called k-regular if degree of every vertex is exactly k. Girth of the graph is the length of a shortest cycle in G. For example, the simple cycle with 5 vertices is a 2-regular graph of girth 5. We claim that there is no 3-regular graph of girth 5 on 10 vertices.
+
+2) Inputs:
+	Undirected graph G = (V, E) in adjacency lists representation with unit edge costs. 
+	Vertices s, t in V .
+   Output:
+   	The number of distinct shortest paths from s to t
+
+   	(a) Briefly describe your algorithm in plain English.
+	(b) Describe your algorithm in pseudocode.
+	(c) Formally prove correctness of your algorithm.
+	(d) State and justify the running time of your algorithm.
+
+3) Input:
+	Server with position (x_s, y_s)
+	Length l of cable connecting server to an outlet
+	Room with n outlets at (x_i, y_i)
+	Starting and ending outlets s, t
+   Output:
+   	L = minimal length of cable needed to accomplish within constraints
+
+   Constraints
+   	Runtime O(n^2 logn)
+   	Server cannot be completely unplugged
+
+
+   Idea:
+	   	Construct graph in following form:
+	   		Vertices: (x, y) positions of outlets and starting point of server
+	   		Edges: euclidean distance between each node
+	   	Run Djikstra's to figure out the shortest path from outlet s to outlet t
+	   	Figure out edge of maximum distance in this shortest path - this has to be (l + L).
+	   	Return M - l, where M is the maximum distance in the shortest path.
+
+
+	Runtime Analysis:
+		Runtime of each part:
+			Adding nodes to graph: O(n) time to add O(n) nodes to the graph
+			Adding edges to graph: O(n^2) time to compute the distance between distinct pairs of O(n) many nodes
+			
+			Addendum: |V| = O(n), |E| = O(n^2)
+			Djikstra runs in O(|E| + |V|log|V|) (with fibonnacci heap implementation) --> Our call with the above values of |E| and |V| runs in O(n^2 + nlogn)
+
+		Total runtime:
+			O(n) + O(n^2) + O(n^2 + nlogn) = O(n) + O(n^2) + O(n^2) + O(nlogn) = O(n) + O(nlogn) + O(n^2)
+			Since O(n), O(nlogn) are bounded above by O(n^2)
+			O(n) + O(n^2) + O(n^2 + nlogn) in O(n^2).
+
+		The algorithm therefore runs in O(n^2) time, which is well within O(n^2 logn) time
+
+4)
+	(a) Compute maximum flow f and minimum cut (S, T).
+
+	(b) Draw the residual graph Gf - don’t forget to state the capacities. Indicate the minimum cut (S, T) in the residual graph by circling S and T.
+
+	(c) An edge is called constricting if increasing its capacity leads to an increase in the value of maximum flow. List all constricting edges in the above network.
+
+	(d) Find a small (at most 4 nodes) example of a network graph that has no constricting edges.
+
+		Graph:
+			Vertices:
+				1 - source
+				2
+				3
+				4 - sink
+			Edges:
+				1->2 (capacity 1)
+				2->4 (capacity 1)
+				1->3 (capacity 1)
+				3->4 (capacity 1)
+
+		The maximum flow of this graph is 2 = (1 + 1):
+			Push 1 unit through 1->2->4 
+			Push 1 unit through 1->3->4
+
+		No edge in this graph is constricting:
+			Edges leaving 1: (1->2, 1->3)
+				Without loss of generality assume we increase the capacity of (1->2) from 1 to 1 + r, r \in R+
+				Note that edge 2->4 is the only edge leaving 2 (with capacity 1)
+				Therefore, we cannot push more than 1 unit of flow into node 2, as there will be excess flow entering it otherwise.
+				Thus the maximum flow where (1->2)'s capacity is increased from 1 to 1 + r is unchanged
+				Therefore (1->2) cannot be constricting, since increasing it had no effect on maximum flow.
+				A similar argument can be constructed for edge (1->3) to show that it is non-constricting.
+			Edges entering 4:
+				Without loss of generality, assume we increase the capacity of (2->4) from 1 to 1 + r, r \in R+.
+				Note that (1->2) is the only edge entering 2 (with capacity 1).
+				Therefore, we cannot push more than 1 unit of flow over (2->4), as only 1 unit of flow is coming into 2.
+				Thus the maximum flow where (2->4)'s capacity is increased from 1 to 1 + r is unchanged
+				Therefore (2->4) cannot be constricting, since increasing it had no effect on maximum flow.
+				A similar argument can be constructed for edge (3->4) to show that it is non-constricting.
+
+
+
+	(e) Describe in plain English an efficient algorithm to find all constricting edges. Argue correctness by using results from lectures/textbook. State the running time of your algorithm.
+	
+
+
+
+

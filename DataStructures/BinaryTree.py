@@ -27,4 +27,4 @@ class BinaryTree:
             if [self.left, self.right] == [None, None]:
                 return {"0":self.value}
             else:
-                left_prefix_free
+                return None # TODO: finish this stuff
