@@ -27,4 +27,5 @@ Taught by Denis Pankratov at UofT
 
 
 This repository contains the work I've done for the course (learning lecture
-content, practice problems, assignments, etc.).
+content, practice problems, assignments, etc.). Lecture notes and programming demos are 
+non-existant past week ~3, I didn't have enough time to do them.
