@@ -9,32 +9,32 @@
 		Number of Connected Components = j >= k
 		Has at least k connected components
 
-
-
 		Consider a graph with n nodes and zero edges (i.e. the number of CCs is n = number of nodes)
 		
 		If we add an edge to connect two CCs into one CC, we reduce the number of CCs by 1; from n to (n - 1).
 		
-		If we add (n - k) CC-connecting edges to this graph, we reduce the number of CCs by (n - k ); from n to (n - (n - k)) = k.
+		If we add (n - k) CC-connecting edges to this graph, we reduce the number of CCs by (n - k); from n to (n - (n - k)) = k.
 
 
 
 	b) Shortest path tree constructed by Djikstra is an MST
 
+		False: see 1b counter example (PPT)
 
 	c) If we have an MST and increase the weight of each edge by 1, the MST is still minimal
 
-		We can compute the MST with Kruskal's or Prim, in either algorithm edges are considered in increasing order.
+		We can compute the MST with Kruskal's or Prim, in either algorithm edges are considered in increasing order ("smallest" first).
 		
 		If we increase the weight of every edge by 1, the order of the edges with respect to weight is unchanged (a < b --> a + 1 < b + 1)
 		
 		If the order of edge consideration remains the same, and the less/greater/equal relations do not change between any two edges, 
 		then the algorithm(s) must output the same result/ MST.
 
-
 	d) In a weighted, directed graph with positive weights, Djikstra's might call the update procedure on the same edge more than once
 
 	(e) Maximum flow in a network with integral capacities is necessarily integral.
+
+		False: see 1d counter example (PPT)
 	
 	(f) We are given a weighted graph and a shortest path from s to t. If all edge weights in the graph are multiplied by a positive constant, the given path remains shortest from s to t with respect to the new weights.
 
@@ -53,6 +53,10 @@
    	The number of distinct shortest paths from s to t
 
    	(a) Briefly describe your algorithm in plain English.
+
+   		Using a dynamic programming solution:
+
+
 	(b) Describe your algorithm in pseudocode.
 	(c) Formally prove correctness of your algorithm.
 	(d) State and justify the running time of your algorithm.
@@ -97,7 +101,13 @@
 4)
 	(a) Compute maximum flow f and minimum cut (S, T).
 
-	(b) Draw the residual graph Gf - don’t forget to state the capacities. Indicate the minimum cut (S, T) in the residual graph by circling S and T.
+		See images made for this question
+
+	(b) i) Draw the residual graph Gf - don’t forget to state the capacities.
+
+			See picture for this question
+			
+		ii) Indicate the minimum cut (S, T) in the residual graph by circling S and T.
 
 	(c) An edge is called constricting if increasing its capacity leads to an increase in the value of maximum flow. List all constricting edges in the above network.
 
@@ -119,7 +129,7 @@
 			Push 1 unit through 1->2->4 
 			Push 1 unit through 1->3->4
 
-		No edge in this graph is constricting:
+		No edge in this graph is constricting - they can be broken up into two categories:
 			Edges leaving 1: (1->2, 1->3)
 				Without loss of generality assume we increase the capacity of (1->2) from 1 to 1 + r, r \in R+
 				Note that edge 2->4 is the only edge leaving 2 (with capacity 1)
@@ -135,9 +145,32 @@
 				Therefore (2->4) cannot be constricting, since increasing it had no effect on maximum flow.
 				A similar argument can be constructed for edge (3->4) to show that it is non-constricting.
 
-
-
 	(e) Describe in plain English an efficient algorithm to find all constricting edges. Argue correctness by using results from lectures/textbook. State the running time of your algorithm.
+
+	I will refer to augmenting paths as AUGMENTATIONS for brevity
+
+	Idea:
+		Modify the augmentation finding-procedure of ford-fulkerson as follows:
+			When an augmentation is found, consider each of its edges
+			Look for the edge of minimum weight
+			Mark this edge as a constrictor if IT IS NOT TIED WITH ANY OTHER EDGES IN THE AUGMENTATION
+		After completion of the algorithm, return all the edges marked as constrictors
+
+	Proof:
+		Let F be a flow network, and A be an augmentation of the flow network.
+		The capacity of A is equal to it's minimum capacity edge e_c (as we can't push any more flow through it)
+		Thus, increasing the capacity of e_c by some k in R+ will also increase the capacity of the path by k
+		The amount of extra flow we can push through F is equal to the capacity of A
+		Thus, if we can increase the capacity of A, we also increase the flow of G
+		Since:
+			Increasing capacity of A in F by k in R+ -> Flow of F increased by k
+			Increasing capacity of e_c in A by k in R+ -> Capacity of A increased by k
+		We can see:
+			Increasing capacity of e_c in A by k in R+ -> Capacity of A in F increased by k -> Flow of F increased by k
+		Thus, e_c is a constricting edge of F.
+
+
+
 	
 
 
